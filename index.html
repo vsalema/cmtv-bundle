@@ -15,6 +15,15 @@
         <span id="title">Live Player</span>
       </div>
       <div class="actions">
+        <input id="srcInput" class="input" placeholder="URL du flux (m3u8/mpd)" />
+        <button id="btnTest" class="btn" title="Tester l’URL">Tester</button>
+        <button id="btnLoad" class="btn" title="Charger le flux">Charger</button>
+        <select id="demoSel" class="input">
+          <option value="">Démos</option>
+          <option value="https://storage.googleapis.com/shaka-demo-assets/angel-one-hls/hls.m3u8">Shaka demo HLS</option>
+          <option value="https://storage.googleapis.com/shaka-demo-assets/angel-one/dash.mpd">Shaka demo DASH</option>
+          <option value="https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8">Mux test HLS</option>
+        </select>
         <button id="themeToggle" class="btn" title="Thème">Thème</button>
       </div>
     </header>
@@ -33,10 +42,11 @@
         <button class="btn" id="btnFs">Plein écran</button>
       </div>
       <div class="note" id="status">Prêt</div>
+
+      <pre id="debug" class="debug"></pre>
     </div>
   </div>
 
-  <!-- Charge Shaka dynamiquement avec timeout; le fallback natif reste actif si échec. -->
   <script src="./js/shaka-loader.js"></script>
   <script src="./js/app.js"></script>
 </body>

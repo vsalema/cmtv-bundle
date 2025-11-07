@@ -1,22 +1,18 @@
-# Live Player v4
+# Live Player v5
 
-Bundle multi-fichiers. Boutons fonctionnels. Chargement Shaka dynamique avec fallback natif.
+Correctifs majeurs:
+- Shaka via `attach(video)` pour supprimer l’avertissement de dépréciation.
+- Champ URL + bouton **Tester** qui renvoie statut HTTP et CORS.
+- Bouton **Charger** pour relancer sans recharger la page.
+- Menu **Démos** avec flux publics pour valider l’UI.
+- Fallback natif si Shaka indisponible.
 
-## Fichiers
-- `index.html`
-- `css/styles.css`
-- `js/shaka-loader.js`
-- `js/app.js`
-- `assets/favicon.svg`
+## Usage
+1) Déployez le dossier.
+2) Ouvrez `/index.html` et collez l’URL du flux, ou utilisez les démos.
+3) Si 404/401/403, réparez côté serveur, pas côté front.
 
-## Utilisation
-Déployez tel quel sur un hébergement statique, puis ouvrez :
-```
-/index.html?src=/streams/CMTVPT.m3u8&title=CMTVPT&autoplay=1&muted=1
-```
-Aucune URL absolue imposée. Aucun hack CORS.
-
-## Dépannage rapide
-- Mixed content: flux en http sur page https → bloqué par le navigateur.
-- CORS: ajoutez `Access-Control-Allow-Origin` côté serveur pour le manifeste ET les segments.
-- Types MIME: `.m3u8 = application/vnd.apple.mpegurl`, `.mpd = application/dash+xml`.
+## Rappels serveurs
+- CORS sur manifeste ET segments.
+- MIME: `.m3u8 = application/vnd.apple.mpegurl`, `.mpd = application/dash+xml`.
+- HTTPS si la page est HTTPS.
