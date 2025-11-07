@@ -50,6 +50,28 @@ async function boot() {
   const loader = document.getElementById('loader');
   const loaderMsg = document.getElementById('loaderMsg');
   const themeToggle = document.getElementById('themeToggle');
+  // Diagnostics helpers
+  const debugEl = document.getElementById('debug');
+  function logd(obj) {
+    try {
+      const s = typeof obj === 'string' ? obj : JSON.stringify(obj, null, 2);
+      debugEl.textContent = (debugEl.textContent ? debugEl.textContent + "\n" : "") + s;
+    } catch(e) {
+      debugEl.textContent += "\n" + String(obj);
+    }
+  }
+
+  // Mixed content check
+  try {
+    if (location.protocol === 'https:' && cfg.src.startsWith('http:')) {
+      logd('Alerte: Mixed Content. Le navigateur bloque http:// sur page https://');
+    }
+  } catch {}
+
+  // Install Shaka polyfills early
+  if (window.shaka && shaka.polyfill) shaka.polyfill.installAll();
+  if (window.shaka && shaka.log) shaka.log.setLevel('v2');
+
 
   themeToggle.addEventListener('click', toggleTheme);
 
@@ -89,6 +111,35 @@ async function boot() {
   }
 
   const player = new shaka.Player(video);
+
+  const net = player.getNetworkingEngine();
+  if (net) {
+    const RequestType = shaka.net.NetworkingEngine.RequestType;
+    net.registerRequestFilter((type, request) => {
+      // Only log, do not modify headers here to avoid CORS issues
+      logd({event:'request', type: String(type), uris: request.uris});
+    });
+    net.registerResponseFilter((type, response) => {
+      logd({event:'response', type: String(type), status: response.status, url: response.uri});
+    });
+  }
+
+  player.addEventListener('error', e => {
+    const det = e.detail || {};
+    const info = {
+      event:'player-error',
+      code: det.code,
+      category: det.category,
+      severity: det.severity,
+      data: det.data,
+      handled: det.handled
+    };
+    logd(info);
+    status.textContent = 'Erreur: ' + (det.code || 'inconnue');
+    if (det.code === 1001) logd('Indice: 1001 = BAD_HTTP_STATUS (souvent 401/403/404).');
+    if (det.code === 1002) logd('Indice: Error 1002 = HTTP_ERROR/CORS. Vérifiez Access-Control-Allow-Origin.');
+  });
+
 
   player.addEventListener('error', e => {
     const code = e.detail?.code || 'inconnue';
