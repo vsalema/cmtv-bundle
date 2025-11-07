@@ -6,8 +6,8 @@
     return {
       src: p.get('src') || '',
       title: p.get('title') || 'Live Player',
-      autoplay: p.get('autoplay') === '1',
-      muted: p.get('muted') !== '0',
+      autoplay: p.has('autoplay') ? p.get('autoplay') === '1' : true,
+      muted: p.has('muted') ? p.get('muted') !== '0' : false,
       poster: p.get('poster') || ''
     };
   }
@@ -61,6 +61,43 @@
     return player;
   }
 
+  
+  async function tryAutoplay(video, unmutedPreferred, statusEl) {
+    const playAttempt = async () => {
+      try {
+        const p = video.play();
+        if (p && p.catch) await p;
+        return true;
+      } catch (e) {
+        return false;
+      }
+    };
+
+    if (unmutedPreferred) {
+      video.muted = false;
+      if (await playAttempt()) return 'autoplay-unmuted-ok';
+      // Fallback: try muted then await first gesture to unmute
+      video.muted = true;
+      if (await playAttempt()) {
+        statusEl.textContent = 'Lecture muette. Touchez pour activer le son.';
+        const onFirstGesture = () => {
+          video.muted = false;
+          video.volume = Math.max(video.volume, 0.8);
+          video.play().catch(()=>{});
+          statusEl.textContent = 'Son activé';
+          ['click','touchstart','keydown'].forEach(ev=>window.removeEventListener(ev, onFirstGesture));
+        };
+        ['click','touchstart','keydown'].forEach(ev=>window.addEventListener(ev, onFirstGesture, {once:true, passive:true}));
+        return 'autoplay-muted-then-gesture';
+      }
+    } else {
+      video.muted = true;
+      if (await playAttempt()) return 'autoplay-muted-ok';
+    }
+    statusEl.textContent = 'Autoplay bloqué. Appuyez Lecture.';
+    return 'autoplay-failed';
+  }
+
   async function start() {
     applyTheme();
     const cfg = getParams();
@@ -99,8 +136,12 @@
         try {
           await loadWithShaka(video, src, {});
           $('loader').classList.add('hidden');
-          $('status').textContent = 'En lecture';
-          if (cfg.autoplay) { const p = video.play(); if (p && p.catch) p.catch(()=>{ $('status').textContent='Autoplay bloqué'; }); }
+          if (cfg.autoplay) {
+            const mode = await tryAutoplay(video, true, $('status'));
+            if (mode.startsWith('autoplay')) { /* ok */ } 
+          } else {
+            $('status').textContent = 'Prêt';
+          }
           return;
         } catch (e) {
           logd({attach_or_load_failed: e.message || String(e)});

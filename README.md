@@ -16,3 +16,9 @@ Correctifs majeurs:
 - CORS sur manifeste ET segments.
 - MIME: `.m3u8 = application/vnd.apple.mpegurl`, `.mpd = application/dash+xml`.
 - HTTPS si la page est HTTPS.
+
+
+## Autoplay non muet par défaut
+- Par défaut `autoplay=1` et `muted=0` si non fournis dans l’URL.
+- Si la politique du navigateur bloque l’autoplay avec son, le player démarre **muet** puis réactive le son au **premier geste utilisateur**.
+- Pour forcer le démarrage muet: `?muted=1`. Pour désactiver l’autoplay: `?autoplay=0`.
