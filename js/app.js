@@ -8,7 +8,7 @@ function getParams() {
     autoplay: p.get('autoplay') === '1',
     muted: p.get('muted') !== '0',             // true par défaut pour compat mobile
     poster: p.get('poster') || '',
-    token: p.get('token') || '',
+    
   };
 }
 
@@ -104,7 +104,7 @@ async function boot() {
     manifest: { retryParameters: { maxAttempts: 4 } },
   });
 
-  const src = withToken(cfg.src, cfg.token);
+  const src = cfg.src;
 
   try {
     loaderMsg.textContent = 'Chargement du flux…';

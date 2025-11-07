@@ -1,30 +1,20 @@
-# Live Player Bundle
+# Live Player Bundle (sans token)
 
-Front statique autonome pour flux HLS/DASH avec Shaka Player.
+Version allégée sans gestion de jeton ni query string supplémentaire.
 
 ## Fichiers
-- `index.html` — page principale réactive et mobile-friendly.
-- `css/styles.css` — thèmes clair/sombre, HUD, loader.
-- `js/app.js` — initialisation Shaka, parsing d’URL, contrôles.
+- `index.html` — page principale.
+- `css/styles.css` — thèmes clair/sombre.
+- `js/app.js` — logique Shaka Player sans token.
 - `assets/favicon.svg` — icône.
 
-## Démarrage
-Hébergez le dossier tel quel sur n’importe quel serveur statique.
-Ouvrez l’URL avec paramètres :
-
+## Utilisation
 ```
 /index.html?src=/streams/CMTVPT.m3u8&title=CMTVPT&autoplay=1&muted=1
 ```
+Aucun paramètre `token` n’est accepté.
 
-### Paramètres
-- `src` — URL du flux HLS/DASH. Chemins relatifs acceptés.
-- `type` — optionnel (`hls` | `dash`), auto-détection sinon.
-- `title` — titre de la page et de l’entête.
-- `autoplay` — `1` pour tenter la lecture auto.
-- `muted` — `0` pour démarrer avec le son, sinon muet par défaut.
-- `poster` — URL d’une image d’attente.
-- `token` — valeur ajoutée en query `?token=…` sans aucun hack CORS.
-
-## Notes conformité
-- Aucun script de blocage CORS. Pas d’URL absolue imposée.
-- Si le flux exige des entêtes d’authentification, faites-le via un reverse proxy côté serveur.
+## Caractéristiques
+- Zéro CORS hack.
+- Aucune URL absolue.
+- Compatible mobile.
