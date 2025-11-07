@@ -2,13 +2,10 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-  <title>Live Player · Debug</title>
+  <title>Live Player</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./css/styles.css">
-  <!-- Shaka Player (HLS + DASH) -->
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.9.4/shaka-player.compiled.min.js" integrity="sha512-SHc3q0mJ7cOI2tH6H7kqV7b9g5Z5o5jaJ3wzVxQ6rTn0Y7m0FZ6i8a+2o8S9mJt1L9Y2S7g3y3CqTn4C3xN2zw==" crossorigin="anonymous"></script>
-  <script defer src="./js/app.js"></script>
 </head>
 <body>
   <div id="app">
@@ -36,8 +33,11 @@
         <button class="btn" id="btnFs">Plein écran</button>
       </div>
       <div class="note" id="status">Prêt</div>
-      <pre id="debug" class="debug"></pre>
     </div>
   </div>
+
+  <!-- Charge Shaka dynamiquement avec timeout; le fallback natif reste actif si échec. -->
+  <script src="./js/shaka-loader.js"></script>
+  <script src="./js/app.js"></script>
 </body>
 </html>
